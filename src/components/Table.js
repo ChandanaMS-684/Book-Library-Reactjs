@@ -1,10 +1,10 @@
 import * as React from "react";
 import PropTypes from "prop-types";
-import { useTheme } from "@mui/material/styles";
+import { useTheme, styled } from "@mui/material/styles";
 import Box from "@mui/material/Box";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
-import TableCell from "@mui/material/TableCell";
+import TableCell, { tableCellClasses } from "@mui/material/TableCell";
 import TableContainer from "@mui/material/TableContainer";
 import TableFooter from "@mui/material/TableFooter";
 import TablePagination from "@mui/material/TablePagination";
@@ -23,6 +23,26 @@ const columns = [
   { field: "first_publish_year", headerName: "Year" },
   { field: "author_name", headerName: "Author" }
 ];
+
+const StyledTableCell = styled(TableCell)(({ theme }) => ({
+  [`&.${tableCellClasses.head}`]: {
+    backgroundColor: theme.palette.common.black,
+    color: theme.palette.common.white
+  },
+  [`&.${tableCellClasses.body}`]: {
+    fontSize: 14
+  }
+}));
+
+const StyledTableRow = styled(TableRow)(({ theme }) => ({
+  "&:nth-of-type(odd)": {
+    backgroundColor: theme.palette.action.hover
+  },
+  // hide last border
+  "&:last-child td, &:last-child th": {
+    border: 0
+  }
+}));
 
 //Book Pagination
 function TablePaginationActions(props) {
@@ -124,12 +144,12 @@ export default function BookTable({ filteredData, getAuthorDetails }) {
     <TableContainer component={Paper}>
       <Table sx={{ minWidth: 500 }}>
         <TableHead>
-          <TableRow>
+          <StyledTableRow>
             {columns &&
               columns.map((column) => {
-                return <TableCell>{column.headerName}</TableCell>; //Returns Column Names
+                return <StyledTableCell>{column.headerName}</StyledTableCell>; //Returns Column Names
               })}
-          </TableRow>
+          </StyledTableRow>
         </TableHead>
         <TableBody>
           {(rowsPerPage > 0
@@ -140,12 +160,12 @@ export default function BookTable({ filteredData, getAuthorDetails }) {
             : filteredData
           ) //Displaying rows with BookData in TABLE
             .map((row) => (
-              <TableRow key={row.name}>
-                <TableCell component="th" scope="row">
+              <StyledTableRow key={row.name}>
+                <StyledTableCell component="th" scope="row">
                   {row.title}
-                </TableCell>
-                <TableCell>{row.first_publish_year}</TableCell>
-                <TableCell>
+                </StyledTableCell>
+                <StyledTableCell>{row.first_publish_year}</StyledTableCell>
+                <StyledTableCell>
                   {row.author_name.map((author) => {
                     return (
                       <>
@@ -159,18 +179,18 @@ export default function BookTable({ filteredData, getAuthorDetails }) {
                       </>
                     );
                   })}
-                </TableCell>
-              </TableRow>
+                </StyledTableCell>
+              </StyledTableRow>
             ))}
 
           {emptyRows > 0 && (
-            <TableRow style={{ height: 53 * emptyRows }}>
-              <TableCell colSpan={6} />
-            </TableRow>
+            <StyledTableRow style={{ height: 53 * emptyRows }}>
+              <StyledTableCell colSpan={6} />
+            </StyledTableRow>
           )}
         </TableBody>
         <TableFooter>
-          <TableRow>
+          <StyledTableRow>
             <TablePagination
               rowsPerPageOptions={[5, 10, 20, { label: "All", value: -1 }]}
               colSpan={3}
@@ -187,7 +207,7 @@ export default function BookTable({ filteredData, getAuthorDetails }) {
               onRowsPerPageChange={handleChangeRowsPerPage}
               ActionsComponent={TablePaginationActions}
             />
-          </TableRow>
+          </StyledTableRow>
         </TableFooter>
       </Table>
     </TableContainer>

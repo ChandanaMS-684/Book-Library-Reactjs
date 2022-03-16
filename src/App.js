@@ -66,9 +66,10 @@ function App() {
       <div align="center">
         <Typography
           color="darkslateblue"
+          fontFamily="fantasy"
           padding="10px"
           align="center"
-          variant="h3"
+          variant="h4"
         >
           BOOK LIBRARY
         </Typography>
@@ -95,22 +96,27 @@ function App() {
             toggleDrawer();
           }}
         >
-          <Typography color="darkcyan" variant="h4" align="center">
+          <Typography
+            color="darkslateblue"
+            fontFamily="fantasy"
+            variant="h4"
+            align="center"
+          >
             AUTHOR DETAILS
           </Typography>{" "}
           {/*Displaying Author Details in Drawer,styling using Typography */}
           {authorDetails.length > 0 ? (
             <>
-              <Typography variant="h5">
+              <Typography variant="h5" color="CaptionText" fontStyle="italic">
                 Name: {authorDetails[0]?.name}
               </Typography>
-              <Typography variant="h5">
+              <Typography variant="h5" color="CaptionText" fontStyle="italic">
                 Year-of-Birth: {authorDetails[0]?.birth_date}
               </Typography>
-              <Typography variant="h5">
+              <Typography variant="h5" color="CaptionText" fontStyle="italic">
                 Year-of-Death: {authorDetails[0]?.death_date}
               </Typography>
-              <Typography variant="h5">
+              <Typography variant="h5" color="CaptionText" fontStyle="italic">
                 Top-Work: {authorDetails[0]?.top_work}
               </Typography>
             </>
