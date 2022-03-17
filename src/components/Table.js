@@ -122,7 +122,11 @@ TablePaginationActions.propTypes = {
 
 /*Passing the BookData,AuthorDetailsData to a BookTable function 
   that returns the data in the table and authordetails in drawer*/
-export default function BookTable({ filteredData, getAuthorDetails, search }) {
+export default function BookTable({
+  filteredData = [],
+  getAuthorDetails,
+  search = ""
+}) {
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
 
@@ -145,14 +149,14 @@ export default function BookTable({ filteredData, getAuthorDetails, search }) {
   };
 
   //Condition to check, if there are no results for the searched book
-  if (filteredData.length === 0 && search.length > 0) {
+  if (filteredData.length === 0 && search?.length > 0) {
     return <h1 align="center">No Books found for this search!</h1>;
   }
 
   //Book Details is displayed in Table format
   return (
     <>
-      {filteredData.length > 0 && search.length > 0 && (
+      {filteredData.length > 0 && search?.length > 0 && (
         <TableContainer component={Paper}>
           <Table sx={{ minWidth: 500 }}>
             <TableHead>

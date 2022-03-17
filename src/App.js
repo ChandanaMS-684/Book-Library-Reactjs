@@ -21,6 +21,10 @@ function App() {
   //Search Book Functionality to search book by title in Search Bar
   const handleSearch = async (e) => {
     setLoading(true);
+    if (e.target.value === "" && search && search !== "") {
+      setdocs();
+      setSearch("");
+    }
     //condition to check if searched data is not empty
     if (e.key === "Enter" && e.target.value !== "") {
       const url = "https://openlibrary.org/search.json?title=" + e.target.value;
