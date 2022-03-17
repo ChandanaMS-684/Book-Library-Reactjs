@@ -8,38 +8,25 @@ import Drawer from "@mui/material/Drawer";
 function App() {
   /*Using React Hook for current state and changed state
     for functional component*/
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [docs, setdocs] = useState([]); //book data
   const [open, setOpen] = useState(false); //drawer
+  const [search, setSearch] = useState([]); //search data
   const [authorDetails, setAuthorDetails] = useState([]); //author-details
+
   const fetchData = async (url) => {
     return await axios.get(url);
   };
-
-  //Passing the public API consisting of book-data and fetching it by using axios
-  useEffect(async () => {
-    const url = "https://openlibrary.org/search.json?author=tolkien";
-    const fetchResult = await axios.get(url);
-    setdocs(fetchResult?.data?.docs);
-    setLoading(false);
-  }, []);
 
   //Search Book Functionality to search book by title in Search Bar
   const handleSearch = async (e) => {
     setLoading(true);
     //condition to check if searched data is not empty
-    if (e.target.value !== "") {
-      //Filtering books using searched data
-      const res = docs.filter((item) =>
-        item.title.toLowerCase().includes(e.target.value.toLowerCase())
-      );
-      //setting the filtered data to res
-      setdocs(res);
-    } else {
-      const res = await fetchData(
-        "https://openlibrary.org/search.json?author=tolkien"
-      );
-      setdocs(res?.data?.docs);
+    if (e.key === "Enter" && e.target.value !== "") {
+      const url = "https://openlibrary.org/search.json?title=" + e.target.value;
+      const fetchResult = await axios.get(url);
+      setdocs(fetchResult?.data?.docs);
+      setSearch(e.target.value);
     }
     setLoading(false);
   };
@@ -76,18 +63,24 @@ function App() {
         <TextField
           type="search"
           variant="outlined"
-          label="Search by Title..."
-          onChange={(e) => {
+          label="Search by Title & Press Enter"
+          onKeyPress={(e) => {
             handleSearch(e);
           }}
         />
       </div>
 
-      {loading ? (
-        <h2 align="center"> Loading Please wait .... </h2> //Loading is displayed untill the data is fetched
-      ) : (
-        <Table filteredData={docs} getAuthorDetails={getAuthorDetails} />
-      )}
+      {
+        loading ? (
+          <h2 align="center"> Loading....Please wait! </h2>
+        ) : (
+          <Table
+            filteredData={docs}
+            search={search}
+            getAuthorDetails={getAuthorDetails}
+          />
+        ) //Loading is displayed untill the data is fetched
+      }
       {open && (
         <Drawer //anchor defines the side of the Drawer i.e.,right
           anchor={"right"}

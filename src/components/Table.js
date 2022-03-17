@@ -24,6 +24,7 @@ const columns = [
   { field: "author_name", headerName: "Author" }
 ];
 
+//Styling TableCells
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
     backgroundColor: theme.palette.common.black,
@@ -34,6 +35,7 @@ const StyledTableCell = styled(TableCell)(({ theme }) => ({
   }
 }));
 
+//Styling TableRows
 const StyledTableRow = styled(TableRow)(({ theme }) => ({
   "&:nth-of-type(odd)": {
     backgroundColor: theme.palette.action.hover
@@ -49,7 +51,8 @@ function TablePaginationActions(props) {
   const theme = useTheme();
   const { count, page, rowsPerPage, onPageChange } = props;
 
-  // Declaring Button Click events for Pages in Pagination
+  // Button Click events for Pages in Pagination,
+
   const handleFirstPageButtonClick = (event) => {
     onPageChange(event, 0);
   };
@@ -109,6 +112,7 @@ function TablePaginationActions(props) {
   );
 }
 
+//Pagination PropsTypes
 TablePaginationActions.propTypes = {
   count: PropTypes.number.isRequired,
   onPageChange: PropTypes.func.isRequired,
@@ -118,7 +122,7 @@ TablePaginationActions.propTypes = {
 
 /*Passing the BookData,AuthorDetailsData to a BookTable function 
   that returns the data in the table and authordetails in drawer*/
-export default function BookTable({ filteredData, getAuthorDetails }) {
+export default function BookTable({ filteredData, getAuthorDetails, search }) {
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
 
@@ -135,81 +139,93 @@ export default function BookTable({ filteredData, getAuthorDetails }) {
     setPage(0);
   };
 
+  //Initialising to fetch data of author
   const handleAuthor = (author) => {
     getAuthorDetails(author);
   };
 
+  //Condition to check, if there are no results for the searched book
+  if (filteredData.length === 0 && search.length > 0) {
+    return <h1 align="center">No Books found for this search!</h1>;
+  }
+
   //Book Details is displayed in Table format
   return (
-    <TableContainer component={Paper}>
-      <Table sx={{ minWidth: 500 }}>
-        <TableHead>
-          <StyledTableRow>
-            {columns &&
-              columns.map((column) => {
-                return <StyledTableCell>{column.headerName}</StyledTableCell>; //Returns Column Names
-              })}
-          </StyledTableRow>
-        </TableHead>
-        <TableBody>
-          {(rowsPerPage > 0
-            ? filteredData.slice(
-                page * rowsPerPage,
-                page * rowsPerPage + rowsPerPage
-              )
-            : filteredData
-          ) //Displaying rows with BookData in TABLE
-            .map((row) => (
-              <StyledTableRow key={row.name}>
-                <StyledTableCell component="th" scope="row">
-                  {row.title}
-                </StyledTableCell>
-                <StyledTableCell>{row.first_publish_year}</StyledTableCell>
-                <StyledTableCell>
-                  {row.author_name.map((author) => {
+    <>
+      {filteredData.length > 0 && search.length > 0 && (
+        <TableContainer component={Paper}>
+          <Table sx={{ minWidth: 500 }}>
+            <TableHead>
+              <StyledTableRow>
+                {columns &&
+                  columns.map((column) => {
                     return (
-                      <>
-                        <Button
-                          onClick={() => {
-                            handleAuthor(author);
-                          }}
-                        >
-                          {author}
-                        </Button>
-                      </>
-                    );
+                      <StyledTableCell>{column.headerName}</StyledTableCell>
+                    ); //Returns Column Names
                   })}
-                </StyledTableCell>
               </StyledTableRow>
-            ))}
+            </TableHead>
+            <TableBody>
+              {(rowsPerPage > 0
+                ? filteredData.slice(
+                    page * rowsPerPage,
+                    page * rowsPerPage + rowsPerPage
+                  )
+                : filteredData
+              ) //Displaying rows with BookData in TABLE
+                ?.map((row) => (
+                  <StyledTableRow key={row?.name}>
+                    <StyledTableCell component="th" scope="row">
+                      {row?.title}
+                    </StyledTableCell>
+                    <StyledTableCell>{row?.first_publish_year}</StyledTableCell>
+                    <StyledTableCell>
+                      {row?.author_name?.map((author) => {
+                        return (
+                          <>
+                            <Button
+                              onClick={() => {
+                                handleAuthor(author);
+                              }}
+                            >
+                              {author}
+                            </Button>
+                          </>
+                        );
+                      })}
+                    </StyledTableCell>
+                  </StyledTableRow>
+                ))}
 
-          {emptyRows > 0 && (
-            <StyledTableRow style={{ height: 53 * emptyRows }}>
-              <StyledTableCell colSpan={6} />
-            </StyledTableRow>
-          )}
-        </TableBody>
-        <TableFooter>
-          <StyledTableRow>
-            <TablePagination
-              rowsPerPageOptions={[5, 10, 20, { label: "All", value: -1 }]}
-              colSpan={3}
-              count={filteredData.length}
-              rowsPerPage={rowsPerPage}
-              page={page}
-              SelectProps={{
-                inputProps: {
-                  "aria-label": "rows per page"
-                },
-                native: true
-              }}
-              onPageChange={handleChangePage}
-              onRowsPerPageChange={handleChangeRowsPerPage}
-              ActionsComponent={TablePaginationActions}
-            />
-          </StyledTableRow>
-        </TableFooter>
-      </Table>
-    </TableContainer>
+              {emptyRows > 0 && (
+                <StyledTableRow style={{ height: 53 * emptyRows }}>
+                  <StyledTableCell colSpan={6} />
+                </StyledTableRow>
+              )}
+            </TableBody>
+            <TableFooter>
+              <StyledTableRow>
+                <TablePagination
+                  rowsPerPageOptions={[5, 10, 20, { label: "All", value: -1 }]}
+                  colSpan={3}
+                  count={filteredData.length}
+                  rowsPerPage={rowsPerPage}
+                  page={page}
+                  SelectProps={{
+                    inputProps: {
+                      "aria-label": "rows per page"
+                    },
+                    native: true
+                  }}
+                  onPageChange={handleChangePage}
+                  onRowsPerPageChange={handleChangeRowsPerPage}
+                  ActionsComponent={TablePaginationActions}
+                />
+              </StyledTableRow>
+            </TableFooter>
+          </Table>
+        </TableContainer>
+      )}
+    </>
   );
 }
